@@ -1,15 +1,23 @@
 # -*- coding: utf-8 -*-
-import sys
+#import sys
 from bs4 import BeautifulSoup
 import urllib.request
-from urllib.parse import quote
+#from urllib.parse import quote
 import re
 import requests
+
+from pymongo import MongoClient
 
 #TARGET_URL="http://www.g2b.go.kr:8340/search.do?kwd=%C4%AB%B7%BB%B4%D9&category=TGONG&subCategory=ALL&detailSearch=true&reSrchFlag=false&pageNum=1&sort=RDD&srchFd=ALL&date=&startDate=20170224&endDate=20190324&year=&orgType=balju&orgName=&orgCode=&swFlag=Y&dateType=3&area=&gonggoNo=&preKwd=&preKwds="
 TARGET_URL="http://www.g2b.go.kr:8340/body.do?kwd=%C4%AB%B7%BB%B4%D9&category=TGONG&subCategory=ALL&detailSearch=true&sort=RDD&reSrchFlag=false&pageNum=1&srchFd=ALL&date=&startDate=20170224&endDate=20190324&startDate2=&endDate2=&orgType=balju&orgName=&orgCode=&swFlag=Y&dateType=3&area=&gonggoNo=&preKwd=&preKwds=&body=yes"
 
 # TARGET_KEYWORD=
+
+# DB 연결
+def conn_db():
+    conn = MongoClient("127.0.0.1")
+    db = conn.testDB
+    return db
 
 
 # 클러스터링 함수
@@ -32,6 +40,9 @@ def get_info_from_g2b_title():
     try:
         source_code_from_URL = urllib.request.urlopen(TARGET_URL)
         soup = BeautifulSoup(source_code_from_URL, 'lxml', from_encoding='utf-8')
+
+        db = conn_db()
+        collection_test = db.test
 
         #print(soup)
         for content in soup.select('ul.search_list>li'):
@@ -99,6 +110,18 @@ def get_info_from_g2b_title():
             public_agency = public_agency.replace(" 공고기관  ", "")
             print("공고기관 : ", public_agency)
 
+            collection_test.insert_one(
+                {
+                    'support_title' : title,
+                    'support_detail_url' : content_detail_URL,
+                    'support_end_date' : end_date,
+                    'support_announce_date' : announce_date,
+                    'support_open_date' : open_date,
+                    'suuport_demand_agency' : demand_agency,
+                    'support_public_agency' : public_agency
+                }
+            )
+
             get_info_from_detail_link(content_detail_URL)
     except:
         print("ERROR")
@@ -117,6 +140,9 @@ def get_file_from_link(URL):
     with open("test.xlsx", "wb") as file:
         response = requests.get("http://www.g2b.go.kr:8081/ep/co/fileDownload.do?fileTask=NOTIFY&fileSeq=20190231142::00::2::4")
         file.write(response.content)
+
+
+
 
 
 def main():
