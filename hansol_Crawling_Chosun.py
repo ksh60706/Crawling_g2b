@@ -38,33 +38,7 @@ def get_detail_url_from_list(URL):
     try :
         #print('def2')
         #source_code_from_URL = urllib.request.urlopen(URL)
-        '''
-        soup = BeautifulSoup(source_code_from_URL, 'lxml', from_encoding='utf-8')
-        print('def3')
-        for content in soup.select('div.search_news_box > dl.search_news'):
-            print('def4')
-            print("소스 : "+str(content))
-            # 제목
-            content_title = content.select('dt > a')
-            print("제목 : " + str(content_title))
-
-            # 분류
-            content_kind = content.select('dd.art_info > a')
-            content_kind = str(content_kind[0].find_all(text=True))
-            print("분류 : " + content_kind)
-
-            # 상세 URL
-            #content_URL =
-
-            # 게시일
-            content_date = content.select('dd.art_info > span.date')
-            print("게시일 : " + content_date)
         
-        soup = BeautifulSoup(source_code_from_URL, 'lxml', from_encoding='utf-8')
-        print('def3')
-        for content in soup.find_all('div.search_news_box > dl.search_news'):
-            print("소스 : " + str(content))
-        '''
 
         response = requests.get(URL)
         root = lxml.html.fromstring(response.content)
@@ -95,7 +69,8 @@ def get_content_from_link(URL):
         print(checkURL[0][7:])
         print("주소는 : ",URL)
         news = {
-            'kind': '조선일보',
+            'type': '뉴스',
+            'company': '조선일보',
             'title': '',
             'url': URL,
             'content': '',
@@ -143,7 +118,8 @@ def get_content_from_link(URL):
 
 
             news={
-                'kind': '조선일보',
+                'type': '뉴스',
+                'company': '조선일보',
                 'title': title,
                 'url': URL,
                 'content': content,
