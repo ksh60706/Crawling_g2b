@@ -1,5 +1,5 @@
 import urllib.request
-from bs4 import BeautifulSoup
+# from bs4 import BeautifulSoup
 from urllib.parse import quote
 import re
 import sys
@@ -38,7 +38,7 @@ def get_detail_url_from_list(URL):
     try :
         #print('def2')
         #source_code_from_URL = urllib.request.urlopen(URL)
-        
+
 
         response = requests.get(URL)
         root = lxml.html.fromstring(response.content)
