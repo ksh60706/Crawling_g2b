@@ -11,6 +11,9 @@ TARGET_URL_BEFORE_KEYWORD = "http://nsearch.chosun.com/search/total.search?sort=
 TARGET_URL_KEYWORD = "&query="
 TARGET_URL_PAGENO = "&pn="
 
+MONGO_USER_NAME = "admin"
+MONGO_USER_PASSWORD = "Hanhdwas200!"
+
 # 정규화 처리
 def clean_text(text):
     #cleaned_text = re.sub('[\{\}\[\]\/?.,;:|\)*~!^\-_+<>@\#$%&\\\=\(\'\"]', '', text)
@@ -135,8 +138,10 @@ def get_content_from_link(URL):
 
 # DB 연결 함수
 def db_conn():
-    conn = MongoClient('127.0.0.1')
-    db = conn.DB_CRAWLING
+    #conn = MongoClient('127.0.0.1')
+    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017")
+    db = conn['DB_CRAWLING']
+    #db = conn.DB_CRAWLING
     return db
 
 # 메인 함수
