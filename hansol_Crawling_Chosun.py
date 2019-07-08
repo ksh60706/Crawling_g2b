@@ -24,6 +24,7 @@ TARGET_URL_PAGENO = "&pn="
 MONGO_USER_NAME = "IDCRAWLING"
 MONGO_USER_PASSWORD = "Hanhdwas200!"
 
+# 검색 키워드
 target_keyword = "한솔"
 
 
@@ -177,7 +178,7 @@ def get_content_from_link(URL):
 # DB 연결 함수
 def db_conn():
     #conn = MongoClient('127.0.0.1')
-    #db = conn.DB_CRAWLING
+    #db = conn.DBCRAWLING
 
     conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017/?authSource=DBCRAWLING")
     db = conn['DBCRAWLING']
@@ -216,13 +217,13 @@ def main():
             content = get_content_from_link(url)
             collection.insert_one(content)
 
-            print(content)
-            print(type(content))
-            print(json.dumps(content))
-            print(type(json.dumps(content)))
+            #print(content)
+            #print(type(content))
+            #print(json.dumps(content))
+            #print(type(json.dumps(content)))
             content_json = json.dumps(content)
-            print(content_json)
-            es.index(index="crawling_testtt", body=content_json, id=content_json["crawling_url"].split("/")[-1].replace(".html",""))
+            #print(content_json)
+            es.index(index="crawling_testtt", body=content_json, id=content["crawling_url"].split("/")[-1].replace(".html",""))
 
 
 if __name__ == '__main__':
