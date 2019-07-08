@@ -216,6 +216,7 @@ def main():
             content = get_content_from_link(url)
             collection.insert_one(content)
 
+            print(content)
             print(type(content))
             print(json.dumps(content))
             print(type(json.dumps(content)))
