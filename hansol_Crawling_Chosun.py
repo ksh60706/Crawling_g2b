@@ -177,7 +177,7 @@ def db_conn():
     #conn = MongoClient('127.0.0.1')
     #db = conn.DB_CRAWLING
 
-    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017")
+    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017/?authSource=administrator")
     db = conn['DBCRAWLING']
     return db
 
@@ -200,7 +200,7 @@ def main():
         urls = get_detail_url_from_list(TARGET_URL)
 
         db = db_conn()
-        collection = db.news
+        collection = db.NEWS_HANSOL
 
         for url in urls:
             content = get_content_from_link(url)
