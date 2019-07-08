@@ -108,13 +108,13 @@ def get_content_from_link(URL):
         print(checkURL[0][7:])
         print("주소는 : ",URL)
         news = {
-            'crawling_type': '뉴스',
-            'crawling_company': '조선일보',
-            'crawling_keyword': target_keyword,
-            'crawling_title': '',
-            'crawling_url': URL,
-            'crawling_content': '',
-            'crawling_newsDate': ''
+            "crawling_type": "뉴스",
+            "crawling_company": "조선일보",
+            "crawling_keyword": target_keyword,
+            "crawling_title": "",
+            "crawling_url": URL,
+            "crawling_content": "",
+            "crawling_newsDate": ""
         }
         return news
 
@@ -158,13 +158,13 @@ def get_content_from_link(URL):
 
 
             news={
-                'crawling_type': '뉴스',
-                'crawling_company': '조선일보',
-                'crawling_keyword': target_keyword,
-                'crawling_title': title,
-                'crawling_url': URL,
-                'crawling_content': content,
-                'crawling_newsDate': newsDate
+                "crawling_type": "뉴스",
+                "crawling_company": "조선일보",
+                "crawling_keyword": target_keyword,
+                "crawling_title": title,
+                "crawling_url": URL,
+                "crawling_content": content,
+                "crawling_newsDate": newsDate
             }
             return news
 
@@ -216,6 +216,9 @@ def main():
             content = get_content_from_link(url)
             collection.insert_one(content)
 
+            print(type(content))
+            print(json.dumps(content))
+            print(type(json.dumps(content)))
             content_json = json.dumps(content)
             print(content_json)
             es.index(index="crawling_testtt", body=content_json)
