@@ -222,7 +222,7 @@ def main():
             print(type(json.dumps(content)))
             content_json = json.dumps(content)
             print(content_json)
-            es.index(index="crawling_testtt", body=content_json, id=content_json["crawling_url"].split("/")[-1])
+            es.index(index="crawling_testtt", body=content_json, id=content_json["crawling_url"].split("/")[-1].replace(".html",""))
 
 
 if __name__ == '__main__':
