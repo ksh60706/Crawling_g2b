@@ -106,13 +106,13 @@ def get_content_from_link(URL):
         print(checkURL[0][7:])
         print("주소는 : ",URL)
         news = {
-            'type': '뉴스',
-            'company': '조선일보',
-            'keyword': target_keyword,
-            'title': '',
-            'url': URL,
-            'content': '',
-            'newsDate': ''
+            'crawling_type': '뉴스',
+            'crawling_company': '조선일보',
+            'crawling_keyword': target_keyword,
+            'crawling_title': '',
+            'crawling_url': URL,
+            'crawling_content': '',
+            'crawling_newsDate': ''
         }
         return news
 
@@ -156,13 +156,13 @@ def get_content_from_link(URL):
 
 
             news={
-                'type': '뉴스',
-                'company': '조선일보',
-                'keyword': target_keyword,
-                'title': title,
-                'url': URL,
-                'content': content,
-                'newsDate': newsDate
+                'crawling_type': '뉴스',
+                'crawling_company': '조선일보',
+                'crawling_keyword': target_keyword,
+                'crawling_title': title,
+                'crawling_url': URL,
+                'crawling_content': content,
+                'crawling_newsDate': newsDate
             }
             return news
 
@@ -177,7 +177,7 @@ def db_conn():
     #conn = MongoClient('127.0.0.1')
     #db = conn.DB_CRAWLING
 
-    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017/?authSource=administrator")
+    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017/?authSource=DBCRAWLING")
     db = conn['DBCRAWLING']
     return db
 
