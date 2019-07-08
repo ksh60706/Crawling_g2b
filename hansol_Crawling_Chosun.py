@@ -215,9 +215,10 @@ def main():
 
         for url in urls:
             content = get_content_from_link(url)
+            print("content 첫번쨰 : ", content)
             collection.insert_one(content)
 
-            #print(content)
+            print("content 두번째 : ", content)
             #print(type(content))
             #print(json.dumps(content))
             #print(type(json.dumps(content)))
