@@ -7,12 +7,25 @@ from pymongo import MongoClient
 import requests
 import lxml.html
 
+import datetime
+
+# 어제 날짜 구하기
+YESTERDAY_DATE = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y%m%d")
+
+# 유동적으로 변할 URL 주소 설정
 TARGET_URL_BEFORE_KEYWORD = "http://nsearch.chosun.com/search/total.search?sort=1"
 TARGET_URL_KEYWORD = "&query="
+TARGET_URL_START_DATE = "&date_start="
+TARGET_URL_END_DATE = "&date_end="
 TARGET_URL_PAGENO = "&pn="
 
-MONGO_USER_NAME = "admin"
+MONGO_USER_NAME = "IDCRAWLING"
 MONGO_USER_PASSWORD = "Hanhdwas200!"
+
+target_keyword = "한솔"
+
+
+
 
 # 정규화 처리
 def clean_text(text):
@@ -28,6 +41,27 @@ def normalize_spaces(text):
     '''
     return re.sub(r'\s+', ' ', text).strip()
 
+def check_page_count(URL):
+    '''
+
+    :param url: 해당 url로 접속하여 페이지 수 파악하기
+    :return: 전체 페이지 수
+    '''
+    #print(URL)
+    try :
+        response = requests.get(URL)
+        root = lxml.html.fromstring(response.content)
+        totalCnt = root.cssselect('div.count_box')[0].text_content()
+        totalCnt = str(totalCnt.split("건")[0])
+        #print("총 건수 : "+totalCnt)
+        pageCnt = (int(totalCnt) // 10) + 1
+        #print("총 페이지수 : " + str(pageCnt))
+        return pageCnt
+    except Exception as ex:
+        print("페이지수 파악 에러 발생", ex)
+        return None
+
+
 # 페이지 리스트 추출 함수
 # 제목, 상세 페이지 URL, 내용
 def get_detail_url_from_list(URL):
@@ -37,7 +71,7 @@ def get_detail_url_from_list(URL):
     '''
     #URL = "http://nsearch.chosun.com/search/total.search?query=%ED%95%9C%EC%86%94&sort=1&pn=1"
     #print('def1')
-    print(URL)
+    #print(URL)
     try :
         #print('def2')
         #source_code_from_URL = urllib.request.urlopen(URL)
@@ -74,6 +108,7 @@ def get_content_from_link(URL):
         news = {
             'type': '뉴스',
             'company': '조선일보',
+            'keyword': target_keyword,
             'title': '',
             'url': URL,
             'content': '',
@@ -123,6 +158,7 @@ def get_content_from_link(URL):
             news={
                 'type': '뉴스',
                 'company': '조선일보',
+                'keyword': target_keyword,
                 'title': title,
                 'url': URL,
                 'content': content,
@@ -139,19 +175,27 @@ def get_content_from_link(URL):
 # DB 연결 함수
 def db_conn():
     #conn = MongoClient('127.0.0.1')
-    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017")
-    db = conn['DB_CRAWLING']
     #db = conn.DB_CRAWLING
+
+    conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017")
+    db = conn['DBCRAWLING']
     return db
 
 # 메인 함수
 def main():
-    print('hello')
-    target_keyword = "한솔"
-    target_pageNo = 710
 
-    for i in range(1, target_pageNo+1):
-        TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_PAGENO + str(i)
+
+
+    TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_START_DATE + str(YESTERDAY_DATE) + TARGET_URL_END_DATE + str(YESTERDAY_DATE) + TARGET_URL_PAGENO + str(1)
+
+    # 페이지 수 파악
+    target_pageNo = check_page_count(TARGET_URL)
+    #print("폐이지수파악 끝 "+str(target_pageNo))
+
+    for i in range(0, target_pageNo):
+        #print(str(i+1)+"번쨰 ")
+        TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_START_DATE + str(YESTERDAY_DATE) + TARGET_URL_END_DATE + str(
+            YESTERDAY_DATE) + TARGET_URL_PAGENO + str(i+1)
 
         urls = get_detail_url_from_list(TARGET_URL)
 
