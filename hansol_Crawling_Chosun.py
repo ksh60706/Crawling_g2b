@@ -6,6 +6,8 @@ import sys
 from pymongo import MongoClient
 import requests
 import lxml.html
+from elasticsearch import Elasticsearch
+import json
 
 import datetime
 
@@ -181,6 +183,11 @@ def db_conn():
     db = conn['DBCRAWLING']
     return db
 
+# ES 연결 함수
+def es_conn():
+    conn = Elasticsearch(hosts="localhost", port=9200)
+    return conn
+
 # 메인 함수
 def main():
 
@@ -192,6 +199,11 @@ def main():
     target_pageNo = check_page_count(TARGET_URL)
     #print("폐이지수파악 끝 "+str(target_pageNo))
 
+    db = db_conn()
+    collection = db.NEWS_HANSOL
+
+    es = es_conn()
+
     for i in range(0, target_pageNo):
         #print(str(i+1)+"번쨰 ")
         TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_START_DATE + str(YESTERDAY_DATE) + TARGET_URL_END_DATE + str(
@@ -199,12 +211,14 @@ def main():
 
         urls = get_detail_url_from_list(TARGET_URL)
 
-        db = db_conn()
-        collection = db.NEWS_HANSOL
 
         for url in urls:
             content = get_content_from_link(url)
             collection.insert_one(content)
+
+            content_json = json.dumps(content)
+            print(content_json)
+            es.index(index="crawling_testtt", body=content_json)
 
 
 if __name__ == '__main__':
