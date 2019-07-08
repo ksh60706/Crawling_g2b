@@ -186,7 +186,7 @@ def db_conn():
 
 # ES 연결 함수
 def es_conn():
-    conn = Elasticsearch(hosts="localhost", port=9200)
+    conn = Elasticsearch(hosts="168.1.1.195", port=9200)
     return conn
 
 # 메인 함수
