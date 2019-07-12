@@ -170,8 +170,8 @@ def main():
     TARGET_URL = ""
 
     # 디비연결
-    db = db_conn()
-    collection = db.NEWS_HANSOL
+    #db = db_conn()
+    #collection = db.NEWS_HANSOL
 
     # 엘라스틱서치 연결
     es = es_conn()
@@ -200,7 +200,7 @@ def main():
 
 
             # 디비 데이터 입력
-            collection.insert_one(content)
+            #collection.insert_one(content)
 
 
 
