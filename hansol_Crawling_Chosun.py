@@ -189,6 +189,8 @@ def db_conn():
     # 운영
     conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017/?authSource=DBCRAWLING")
     db = conn['DBCRAWLING']
+
+    print("디비연결 완료")
     return db
 
 # ES 연결 함수
@@ -198,7 +200,7 @@ def es_conn():
     #conn = Elasticsearch(hosts="127.0.0.1", port=9200)
 
     conn = Elasticsearch(hosts="168.1.1.195", port=9200)
-
+    print("ES연결 완료")
     return conn
 
 # 메인 함수
@@ -228,9 +230,10 @@ def main():
     es = es_conn()
 
     for i in range(0, target_pageNo):
-        #print(str(i+1)+"번쨰 ")
-        TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_START_DATE + str(YESTERDAY_DATE) + TARGET_URL_END_DATE + str(
-            YESTERDAY_DATE) + TARGET_URL_PAGENO + str(i+1)
+        print(str(i+1)+"번쨰 ")
+        #TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_START_DATE + str(YESTERDAY_DATE) + TARGET_URL_END_DATE + str(YESTERDAY_DATE) + TARGET_URL_PAGENO + str(i+1)
+
+        TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_PAGENO + str(i + 1)
 
         urls = get_detail_url_from_list(TARGET_URL)
 
