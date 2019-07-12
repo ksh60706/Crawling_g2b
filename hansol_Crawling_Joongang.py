@@ -164,8 +164,10 @@ def main():
 
     # 페이지 수 확인
     TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_PAGENO # 전체
-    #target_pageNo = check_page_count(TARGET_URL + str(1))
-    target_pageNo = 2
+    target_pageNo = check_page_count(TARGET_URL + str(1))
+    #target_pageNo = 2
+
+    TARGET_URL = ""
 
     # 디비연결
     db = db_conn()
@@ -173,6 +175,8 @@ def main():
 
     # 엘라스틱서치 연결
     es = es_conn()
+
+
 
     # 상세 URL 가져오기
     for i in range(0, target_pageNo):
