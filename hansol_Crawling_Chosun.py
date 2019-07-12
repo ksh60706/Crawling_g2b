@@ -242,7 +242,7 @@ def main():
         for url in urls:
             content = get_content_from_link(url)
 
-            print("content 첫번째 : ", content)
+            #print("content 첫번째 : ", content)
             # print(type(content))
             # print(json.dumps(content))
             # print(type(json.dumps(content)))
@@ -251,7 +251,7 @@ def main():
             es.index(index="crawling_testtt", body=content_json,
                      id=content["crawling_url"].split("/")[-1].replace(".html", ""))
 
-            print("content 두번쨰 : ", content)
+            #print("content 두번쨰 : ", content)
             collection.insert_one(content)
 
 
