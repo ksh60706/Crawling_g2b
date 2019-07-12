@@ -235,6 +235,7 @@ def main():
 
         TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_PAGENO + str(i + 1)
 
+        print(TARGET_URL)
         urls = get_detail_url_from_list(TARGET_URL)
 
 
