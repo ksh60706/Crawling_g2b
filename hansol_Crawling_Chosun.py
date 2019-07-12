@@ -25,7 +25,7 @@ MONGO_USER_NAME = "IDCRAWLING"
 MONGO_USER_PASSWORD = "Hanhdwas200!"
 
 # 검색 키워드
-target_keyword = "한솔"
+target_keyword = "한솔제지"
 
 
 
@@ -177,16 +177,28 @@ def get_content_from_link(URL):
 
 # DB 연결 함수
 def db_conn():
+    
+    # 로컬 피씨
+    #conn = MongoClient('127.0.0.1')
+    #db = conn.DB_CRAWLING
+    
+    # 테스트 서버 
     #conn = MongoClient('127.0.0.1')
     #db = conn.DBCRAWLING
 
+    # 운영
     conn = MongoClient("mongodb://" + MONGO_USER_NAME + ":" + MONGO_USER_PASSWORD + "@localhost:27017/?authSource=DBCRAWLING")
     db = conn['DBCRAWLING']
     return db
 
 # ES 연결 함수
 def es_conn():
+
+    # 로컬 피씨
+    #conn = Elasticsearch(hosts="127.0.0.1", port=9200)
+
     conn = Elasticsearch(hosts="168.1.1.195", port=9200)
+
     return conn
 
 # 메인 함수
@@ -197,11 +209,17 @@ def main():
     TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_START_DATE + str(YESTERDAY_DATE) + TARGET_URL_END_DATE + str(YESTERDAY_DATE) + TARGET_URL_PAGENO + str(1)
 
     # 페이지 수 파악
-    target_pageNo = check_page_count(TARGET_URL)
+    #target_pageNo = check_page_count(TARGET_URL)
+    target_pageNo = 10
     #print("폐이지수파악 끝 "+str(target_pageNo))
 
     db = db_conn()
+
+    # 운영
     collection = db.NEWS_HANSOL
+
+    # 로컬
+    #collection = db.NEWS_HANSOL
 
     es = es_conn()
 
