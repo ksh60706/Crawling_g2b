@@ -77,9 +77,9 @@ def check_page_count(URL):
 
         total_tag = soup.select("span.total_number")[0].text
         total = total_tag.split(" / ")[0].split("-")[1]
-        print(int(total))
+        #print(int(total))
 
-        return total
+        return int(total)
     except Exception as ex:
         print("페이지수 파악 에러 발생", ex)
         return None
