@@ -149,7 +149,7 @@ def get_content_from_link(URL):
             if not root.cssselect('.par'):
                 content = ""
             else:
-                content = root.cssselect('.par')[0].text_content()
+                content = root.cssselect('.par')[0].text_content().split(" ")
 
             if not root.cssselect('.news_date'):
                 newsDate = ""
@@ -216,7 +216,7 @@ def main():
 
     # 페이지 수 파악
     #target_pageNo = check_page_count(TARGET_URL)
-    target_pageNo = 10
+    target_pageNo = 5
     #print("폐이지수파악 끝 "+str(target_pageNo))
 
     db = db_conn()
