@@ -164,14 +164,14 @@ def main():
 
     # 페이지 수 확인
     TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_PAGENO # 전체
-    target_pageNo = check_page_count(TARGET_URL + str(1))
-    #target_pageNo = 2
+    #target_pageNo = check_page_count(TARGET_URL + str(1))
+    target_pageNo = 223
 
     TARGET_URL = ""
 
     # 디비연결
-    #db = db_conn()
-    #collection = db.NEWS_HANSOL
+    db = db_conn()
+    collection = db.NEWS_HANSOL
 
     # 엘라스틱서치 연결
     es = es_conn()
@@ -195,12 +195,12 @@ def main():
 
             # 엘라스틱 데이터 입력
             content_json = json.dumps(content)
-            es.index(index="crawling_testtt_nori", body=content_json,
+            es.index(index="crawling_testtt", body=content_json,
                      id=content["crawling_url"].split("/")[-1])
 
 
             # 디비 데이터 입력
-            #collection.insert_one(content)
+            collection.insert_one(content)
 
 
 

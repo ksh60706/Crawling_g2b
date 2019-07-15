@@ -216,7 +216,7 @@ def main():
 
     # 페이지 수 파악
     #target_pageNo = check_page_count(TARGET_URL)
-    target_pageNo = 5
+    target_pageNo = 91
     #print("폐이지수파악 끝 "+str(target_pageNo))
 
     db = db_conn()
