@@ -185,7 +185,7 @@ def main():
             # 엘라스틱 데이터 입력
             content_json = json.dumps(content)
             es.index(index="crawling_testtt", body=content_json,
-                     id=content["crawling_url"].split("/")[-1])
+                     id=content["crawling_url"].split("/all/")[1])
 
             # 디비 데이터 입력
             collection.insert_one(content)
