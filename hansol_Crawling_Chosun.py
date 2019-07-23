@@ -11,6 +11,8 @@ import json
 
 import datetime
 
+from konlpy.tag import Kkma
+
 # 어제 날짜 구하기
 YESTERDAY_DATE = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y%m%d")
 
@@ -27,7 +29,7 @@ MONGO_USER_PASSWORD = "Hanhdwas200!"
 # 검색 키워드
 target_keyword = "한솔제지"
 
-
+kkma = Kkma()
 
 
 # 정규화 처리
@@ -105,7 +107,7 @@ def get_content_from_link(URL):
 
     checkURL = URL.split(".")
     if checkURL[0][7:] in blackListArticle:
-
+        '''
         print(checkURL[0][7:])
         print("주소는 : ",URL)
         news = {
@@ -118,6 +120,8 @@ def get_content_from_link(URL):
             "crawling_newsDate": ""
         }
         return news
+        '''
+        return None
 
     else:
 
@@ -149,14 +153,13 @@ def get_content_from_link(URL):
             if not root.cssselect('.par'):
                 content = ""
             else:
-                content = root.cssselect('.par')[0].text_content().split(" ")
+                content = kkma.nouns(root.cssselect('.par')[0].text_content())
 
             if not root.cssselect('.news_date'):
                 newsDate = ""
             else:
-                newsDate = root.cssselect('.news_date')[0].text_content()
-
-
+                newsDate_tag = root.cssselect('.news_date')[0].text_content()
+                newsDate = datetime.datetime.strptime(newsDate_tag.replace("입력 ","").replace(".","-") + ":00", "%Y-%m-%d %H:%M:%S")
 
             news={
                 "crawling_type": "뉴스",
@@ -215,14 +218,14 @@ def main():
     print(TARGET_URL)
 
     # 페이지 수 파악
-    #target_pageNo = check_page_count(TARGET_URL)
-    target_pageNo = 91
+    target_pageNo = check_page_count(TARGET_URL)
+    #target_pageNo = 91
     #print("폐이지수파악 끝 "+str(target_pageNo))
 
     db = db_conn()
 
     # 운영
-    collection = db.NEWS_HANSOL
+    collection = db.NEWS_HANSOL_WORDS
 
     # 로컬
     #collection = db.NEWS_HANSOL
@@ -242,17 +245,25 @@ def main():
         for url in urls:
             content = get_content_from_link(url)
 
-            #print("content 첫번째 : ", content)
-            # print(type(content))
-            # print(json.dumps(content))
-            # print(type(json.dumps(content)))
-            content_json = json.dumps(content)
-            # print(content_json)
-            es.index(index="crawling_testtt", body=content_json,
-                     id=content["crawling_url"].split("/")[-1].replace(".html", ""))
+            if not content:
+                print("패스")
+            else:
+                # print("content 첫번째 : ", content)
+                # print(type(content))
+                # print(json.dumps(content))
+                # print(type(json.dumps(content)))
+                #content_json = json.dumps(content)
+                content_json = content
+                # print(content_json)
+                
+                # 엘라스틱 데이터 입력
+                es.index(index="crawling_testtt_words", body=content_json,
+                         id=content["crawling_url"].split("/")[-1].replace(".html", ""))
 
-            #print("content 두번쨰 : ", content)
-            collection.insert_one(content)
+                # print("content 두번쨰 : ", content)
+                # 디비 데이터 입력
+                collection.insert_one(content)
+
 
 
 
