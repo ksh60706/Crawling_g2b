@@ -141,7 +141,7 @@ def get_content_from_link(URL):
         content = kkma.nouns(normalize_spaces(soup.select_one("div.article_txt").text))
 
         newsDate_tag = soup.select("div.title_foot > span.date01")[0].text
-        newsDate = datetime.datetime.strptime( newsDate_tag.replace("입력 ","")+":00", "%Y-%m-%d %H:%M:%S")
+        newsDate = datetime.datetime.strptime( newsDate_tag.replace("입력 ","")+":00", "%Y-%m-%dT%H:%M:%S")
         #newsDate = newsDate_tag.replace("입력 ","")+":00"
         news = {
             "crawling_type": "뉴스",
