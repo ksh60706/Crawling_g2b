@@ -141,7 +141,7 @@ def get_content_from_link(URL):
         content = kkma.nouns(normalize_spaces(soup.select_one("div.article_txt").text))
 
         newsDate_tag = soup.select("div.title_foot > span.date01")[0].text
-        newsDate = datetime.datetime.strptime( newsDate_tag.replace("입력 ","")+":00", "%Y-%m-%dT%H:%M:%S")
+        newsDate = datetime.datetime.strptime( newsDate_tag.replace("입력 ","")+":00", "%Y-%m-%d %H:%M:%S")
         #newsDate = newsDate_tag.replace("입력 ","")+":00"
         news = {
             "crawling_type": "뉴스",
@@ -150,7 +150,7 @@ def get_content_from_link(URL):
             "crawling_title": title,
             "crawling_url": URL,
             "crawling_content": content,
-            "crawling_newsDate": str(newsDate)
+            "crawling_newsDate": newsDate
         }
         #f.close()
         return news
@@ -190,7 +190,8 @@ def main():
             content = get_content_from_link(url)
 
             # 엘라스틱 데이터 입력
-            content_json = json.dumps(content)
+            #content_json = json.dumps(content)
+            content_json = content
             es.index(index="crawling_testtt_words", body=content_json, id=content["crawling_url"].split("/all/")[1].replace('/','-'))
 
             # 디비 데이터 입력
