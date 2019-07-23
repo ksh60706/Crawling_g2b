@@ -8,8 +8,9 @@ import requests
 import lxml.html
 from elasticsearch import Elasticsearch
 import json
-
 import datetime
+
+from konlpy.tag import Kkma
 
 # 어제 날짜 구하기
 YESTERDAY_DATE = (datetime.date.today() - datetime.timedelta(1)).strftime("%Y%m%d")
@@ -27,6 +28,7 @@ MONGO_USER_PASSWORD = "Hanhdwas200!"
 # 검색 키워드
 target_keyword = "한솔제지"
 
+kkma = Kkma()
 
 
 
@@ -34,6 +36,7 @@ target_keyword = "한솔제지"
 def clean_text(text):
     #cleaned_text = re.sub('[\{\}\[\]\/?.,;:|\)*~!^\-_+<>@\#$%&\\\=\(\'\"]', '', text)
     cleaned_text = re.sub('[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]', '', text)
+    #cleaned_text = re.sub("<.+?>","", text,0).strip()
     return cleaned_text
 
 def normalize_spaces(text):
@@ -134,12 +137,14 @@ def get_content_from_link(URL):
         # print(title)
 
         # print(URL)
-        content = normalize_spaces(soup.select_one("div#article_body").text).split(" ")
+        #content = normalize_spaces(soup.select_one("div#article_body").text).split(" ")
+        content = kkma.nouns(normalize_spaces(soup.select_one("div#article_body").text))
         #print(content)
 
         newsDate_tag = soup.select("div.article_head > div.clearfx > div.byline > em")[1].text
         #print(newsDate_tag)
-        newsDate = newsDate_tag.replace("입력 ", "")
+        #newsDate = newsDate_tag.replace("입력 ", "")
+        newsDate = datetime.datetime.strptime(newsDate_tag.replace("입력 ", "").replace(".","-") + ":00", "%Y-%m-%d %H:%M:%S")
         #print(newsDate)
 
         news = {
@@ -164,14 +169,14 @@ def main():
 
     # 페이지 수 확인
     TARGET_URL = TARGET_URL_BEFORE_KEYWORD + TARGET_URL_KEYWORD + target_keyword + TARGET_URL_PAGENO # 전체
-    #target_pageNo = check_page_count(TARGET_URL + str(1))
-    target_pageNo = 223
+    target_pageNo = check_page_count(TARGET_URL + str(1))
+    #target_pageNo = 223
 
     TARGET_URL = ""
 
     # 디비연결
     db = db_conn()
-    collection = db.NEWS_HANSOL
+    collection = db.NEWS_HANSOL_WORDS
 
     # 엘라스틱서치 연결
     es = es_conn()
@@ -190,12 +195,13 @@ def main():
         # 상세 내용 가져오기
         for url in urls:
             #print(url)
-            get_content_from_link(url)
+            #get_content_from_link(url)
             content = get_content_from_link(url)
 
             # 엘라스틱 데이터 입력
-            content_json = json.dumps(content)
-            es.index(index="crawling_testtt", body=content_json,
+            #content_json = json.dumps(content)
+            content_json = content
+            es.index(index="crawling_testtt_words", body=content_json,
                      id=content["crawling_url"].split("/")[-1])
 
 
